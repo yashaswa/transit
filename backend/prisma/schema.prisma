@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  name                String?
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  sessions            Session[]
+  accounts            Account[]
+  phoneNumber         String?
+  phoneNumberVerified Boolean?
+  gender              String
+  dob                 DateTime
+  passport            String?
+
+  familyMembers  FamilyMember[]
+  paymentMethods PaymentMethod[]
+  bookings       Booking[]
+
+  @@unique([phoneNumber])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+// FamilyMember model stores additional people associated with the main user
+model FamilyMember {
+  id       String   @id @default(cuid())
+  userId   String
+  name     String
+  dob      DateTime
+  gender   String
+  phone    String?
+  email    String?
+  passport String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// PaymentMethod model for storing credit/debit card info
+model PaymentMethod {
+  id          String   @id @default(cuid())
+  cardHolder  String
+  cardType    String // You might also use an enum (e.g., VISA, MASTERCARD, etc.)
+  last4       String // Storing only the last 4 digits for display
+  expiryMonth Int
+  expiryYear  Int
+  token       String? // Tokenized card info from your payment gateway
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId  String
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Booking Booking[]
+}
+
+// Enum for different booking types
+
+enum BookingType {
+  FLIGHT
+  HOTEL
+  BUS
+  TRAIN
+  PACKAGE
+}
+
+// Booking model to store any type of travel booking.
+model Booking {
+  id              String      @id @default(cuid())
+  userId          String
+  bookingType     BookingType
+  reference       String // Booking reference number from external providers
+  details         Json? // Additional booking details (e.g. flight number, hotel address)
+  amount          Decimal
+  paymentMethodId String? // Link to the payment method used, if applicable
+  status          String // e.g., confirmed, pending, cancelled
+  bookedAt        DateTime    @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paymentMethod PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+}
