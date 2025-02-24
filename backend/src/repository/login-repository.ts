@@ -10,7 +10,7 @@ class LoginRepository {
   async createUser({ name, email }: { name: string; email: string }) {
     try {
       const user = await this.prisma.user.create({
-        data: {
+        data:{
           name,
           email,
         },
