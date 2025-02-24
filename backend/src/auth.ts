@@ -34,13 +34,13 @@ export const auth = betterAuth({
     },
 
 
-    // socialProviders: {
-    //     google: {
-    //         clientId: process.env.GOOGLE_CLIENT_ID!,
-    //         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    //         redirectUri: process.env.BETTER_AUTH_URL! + "/api/auth/callback/google"
-    //     },
-    // },
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            redirectUri: process.env.BETTER_AUTH_URL! + "/api/auth/callback/google"
+        },
+    },
 
     plugins: [
         phoneNumber({

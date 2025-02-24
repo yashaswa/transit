@@ -1,11 +1,11 @@
 import express from 'express';
-import { requireAuth } from './authMiddleware';
-
+import { requireAuth } from './auth';
 
 const app = express();
 const port = process.env.PORT || 1234;
 
 app.use(express.json());
+
 
 // Basic route
 app.get('/', (req, res) => {
@@ -15,12 +15,6 @@ app.get('/', (req, res) => {
 // Example protected route
 app.get("/protected", requireAuth, (req, res) => {
     res.json({ message: "Access granted", user: req.user });
-});
-
-// Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
 });
 
 // Start the server

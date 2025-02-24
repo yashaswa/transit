@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -15,14 +16,14 @@ model User {
   image               String?
   createdAt           DateTime
   updatedAt           DateTime
-  sessions            Session[]
-  accounts            Account[]
   phoneNumber         String?
   phoneNumberVerified Boolean?
-  gender              String
-  dob                 DateTime
+  gender              String?
+  dob                 DateTime?
   passport            String?
 
+  sessions       Session[]
+  accounts       Account[]
   familyMembers  FamilyMember[]
   paymentMethods PaymentMethod[]
   bookings       Booking[]

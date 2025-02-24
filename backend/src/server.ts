@@ -2,6 +2,7 @@ import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import cors from "cors";
 import express from "express";
 import { auth } from "./auth";
+import userRoutes from "./userRoutes";
 
 const app = express();
 const port = 8000;
@@ -23,6 +24,9 @@ app.get("/api/me", async (req, res): Promise<any> => {
 // or only apply it to routes that don't interact with Better Auth
 app.use(express.json());
 app.use(cors());
+
+// Mount user routes
+app.use(userRoutes);
 
 app.listen(port, () => {
     console.log(`Better Auth app listening on port ${port}`);
