@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireAuth } from './auth';
 
+
 const app = express();
 const port = process.env.PORT || 1234;
 
